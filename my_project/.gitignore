@@ -9,3 +9,5 @@ scratch/**
 **/explorations/**
 **/!explorations/README.md
 .vscode/
+uv.lock
+uv.lock
