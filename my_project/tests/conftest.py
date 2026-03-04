@@ -3,6 +3,9 @@
 import os, sys, pathlib
 from contextlib import contextmanager
 
+# Ensure the SDK uses the correct Databricks CLI profile when none is set explicitly.
+os.environ.setdefault("DATABRICKS_CONFIG_PROFILE", "DatabricksBPFCase")
+
 
 try:
     from databricks.connect import DatabricksSession
