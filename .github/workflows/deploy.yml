@@ -1,70 +1,26 @@
-name: Validate Databricks Bundle (PR)
-
-on:
-  pull_request:
-    paths:
-      - "my_project/**"
-      - ".github/workflows/**"
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: workflow_dispatch
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  test:
+  my_script_using_wif:
     runs-on: ubuntu-latest
-    environment: Dev
+    environment: dev
     env:
       DATABRICKS_AUTH_TYPE: github-oidc
-      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
-    defaults:
-      run:
-        working-directory: ./my_project
+      DATABRICKS_HOST: https://dbc-e3f191cd-7308.cloud.databricks.com
+      DATABRICKS_CLIENT_ID: 50e63598-ed43-4982-82f6-00565cbda8af
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v7
-
-      - name: Run unit tests
-        run: uv run pytest -v
-
-  validate:
-    runs-on: ubuntu-latest
-    needs: test
-    environment: Dev
-    env:
-      DATABRICKS_AUTH_TYPE: github-oidc
-      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Databricks CLI  
+      - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
-      - name: Validate 
-        working-directory: ./my_project
-        run: |
-          databricks bundle validate -t dev \
-            --var="DATABRICKS_HOST=${{ vars.DATABRICKS_HOST }}" \
-            --var="service_principal_id=${{ secrets.DATABRICKS_CLIENT_ID }}"
-
-      - name: Plan (dry-run)
-        working-directory: ./my_project
-        run: |
-          databricks bundle plan -t dev \
-            --var="DATABRICKS_HOST=${{ vars.DATABRICKS_HOST }}" \
-            --var="service_principal_id=${{ secrets.DATABRICKS_CLIENT_ID }}"
-
-      - name: Deploy (PR - Dev)
-        working-directory: ./my_project
-        run: |
-          databricks bundle deploy -t dev \
-            --var="DATABRICKS_HOST=${{ vars.DATABRICKS_HOST }}" \
-            --var="service_principal_id=${{ secrets.DATABRICKS_CLIENT_ID }}"
+      - name: Run Databricks CLI commands
+        run: databricks current-user me

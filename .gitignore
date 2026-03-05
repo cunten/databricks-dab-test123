@@ -9,5 +9,9 @@ scratch/**
 **/explorations/**
 **/!explorations/README.md
 .vscode
-uv.lock
 .coverage
+my_project/.github/
+my_project/.ai-dev-kit/
+my_project/.pytest_cache/
+.vscode/
+.pytest_cache/
