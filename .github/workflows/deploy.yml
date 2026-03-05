@@ -13,9 +13,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      DATABRICKS_HOST: https://dbc-e3f191cd-7308.cloud.databricks.com
-      DATABRICKS_CLIENT_ID: 50e63598-ed43-4982-82f6-00565cbda8af
-      DATABRICKS_CLIENT_SECRET: dose6acf6d87c477bde180e1c5c2a0bf98d3
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
     defaults:
       run:
         working-directory: ./my_project
@@ -33,11 +33,11 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     needs: test
-    environment: Dev
+    environment: dev
     env:
-      DATABRICKS_HOST: https://dbc-e3f191cd-7308.cloud.databricks.com
-      DATABRICKS_CLIENT_ID: 50e63598-ed43-4982-82f6-00565cbda8af
-      DATABRICKS_CLIENT_SECRET: dose6acf6d87c477bde180e1c5c2a0bf98d3
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
 
     steps:
       - name: Checkout repository
