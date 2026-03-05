@@ -34,6 +34,9 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v7
 
+      - name: Install dependencies
+        run: uv sync
+
       - name: Run unit tests
         run: uv run pytest -v
 
@@ -50,12 +53,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug env vars
-        run: |
-          echo "DATABRICKS_HOST=$DATABRICKS_HOST"
-          echo "DATABRICKS_CLIENT_ID=$DATABRICKS_CLIENT_ID"
-          echo "DATABRICKS_CLIENT_SECRET=$DATABRICKS_CLIENT_SECRET"
-
       - name: Set up Databricks CLI
         uses: databricks/setup-cli@main
 
@@ -63,6 +60,18 @@ jobs:
         working-directory: ./my_project
         run: |
           databricks bundle validate -t dev \
+            --var="service_principal_id=${{ secrets.DATABRICKS_CLIENT_ID }}"
+      
+      - name: Plan (dry-run)
+        working-directory: ./my_project
+        run: |
+          databricks bundle plan -t dev \
+            --var="service_principal_id=${{ secrets.DATABRICKS_CLIENT_ID }}"
+      
+      - name: Summary
+        working-directory: ./my_project
+        run: |
+          databricks bundle summary -t dev \
             --var="service_principal_id=${{ secrets.DATABRICKS_CLIENT_ID }}"
 
       - name: Deploy (PR - Dev)

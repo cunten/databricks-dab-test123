@@ -10,8 +10,6 @@ scratch/**
 **/!explorations/README.md
 .vscode
 .coverage
-my_project/.github/
-my_project/.ai-dev-kit/
 my_project/.pytest_cache/
 .vscode/
 .pytest_cache/
