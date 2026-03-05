@@ -8,6 +8,6 @@ scratch/**
 !scratch/README.md
 **/explorations/**
 **/!explorations/README.md
-.vscode/
+.vscode
 uv.lock
-uv.lock
+.coverage
