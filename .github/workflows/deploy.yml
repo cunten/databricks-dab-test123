@@ -13,6 +13,11 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment: Dev
+    env:
+      DATABRICKS_AUTH_TYPE: github-oidc
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
     defaults:
       run:
         working-directory: ./my_project
