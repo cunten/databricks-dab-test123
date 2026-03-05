@@ -30,7 +30,7 @@ targets:
       host: https://dbc-e3f191cd-7308.cloud.databricks.com
       root_path: ~/.bundle/${bundle.name}/${bundle.target}
     run_as:
-      # NOTE: despite the name, Databricks expects the SP application (client) ID here
+      # NOTE: despite the name, Databricks expects the SP application (client) ID here 123
       service_principal_name: ${var.service_principal_id}
   prod:
     mode: production
