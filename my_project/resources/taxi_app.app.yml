@@ -1,0 +1,6 @@
+resources:
+  apps:
+    taxi_app:
+      name: "dab-test123-taxi-${bundle.target}"
+      description: "Streamlit app visualizing NYC Taxi trip data from samples.nyctaxi.trips"
+      source_code_path: ../src/taxi_app

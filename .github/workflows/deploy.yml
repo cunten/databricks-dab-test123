@@ -25,12 +25,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug env vars
-        run: |
-          echo "DATABRICKS_HOST=$DATABRICKS_HOST"
-          echo "DATABRICKS_CLIENT_ID=$DATABRICKS_CLIENT_ID"
-          echo "DATABRICKS_CLIENT_SECRET=$DATABRICKS_CLIENT_SECRET"
-
       - name: Set up uv
         uses: astral-sh/setup-uv@v7
 

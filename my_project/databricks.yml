@@ -2,7 +2,6 @@
 # See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
 bundle:
   name: dab_test123
-  uuid: 693374e4-889c-41b5-8908-cba2de9d158b
 
 include:
   - resources/*.yml
