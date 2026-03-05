@@ -2,7 +2,6 @@
 # See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
 bundle:
   name: dab_test123
-  uuid: 693374e4-889c-41b5-8908-cba2de9d158b
 
 include:
   - resources/*.yml
@@ -21,6 +20,10 @@ variables:
     default: files
   service_principal_id:
     description: "Service principal application (client) ID"
+    default: ""
+  warehouse_id:
+    description: "SQL warehouse used by the taxi app"
+    default: "514efc70154b4e6e"
 
 targets:
   dev:
@@ -29,9 +32,6 @@ targets:
     workspace:
       host: https://dbc-e3f191cd-7308.cloud.databricks.com
       root_path: ~/.bundle/${bundle.name}/${bundle.target}
-    run_as:
-      # NOTE: despite the name, Databricks expects the SP application (client) ID here 123
-      service_principal_name: ${var.service_principal_id}
   prod:
     mode: production
     workspace:

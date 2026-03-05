@@ -1,0 +1,12 @@
+resources:
+  apps:
+    taxi_app:
+      name: "dab-test123-taxi-${bundle.target}"
+      description: "Streamlit app visualizing NYC Taxi trip data from samples.nyctaxi.trips"
+      source_code_path: ../src/taxi_app
+      resources:
+        - name: "sql-warehouse"
+          description: "SQL Warehouse for querying NYC Taxi data"
+          sql_warehouse:
+            id: ${var.warehouse_id}
+            permission: CAN_USE
