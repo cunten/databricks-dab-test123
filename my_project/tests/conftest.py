@@ -4,7 +4,9 @@ import os, sys, pathlib
 from contextlib import contextmanager
 
 # Ensure the SDK uses the correct Databricks CLI profile when none is set explicitly.
-os.environ.setdefault("DATABRICKS_CONFIG_PROFILE", "DatabricksBPFCase")
+# Skip in CI where OIDC auth is used instead of a local profile.
+if not os.environ.get("CI"):
+    os.environ.setdefault("DATABRICKS_CONFIG_PROFILE", "DatabricksBPFCase")
 
 
 try:
