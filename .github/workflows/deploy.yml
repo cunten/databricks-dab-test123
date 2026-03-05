@@ -1,6 +1,10 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: workflow_dispatch
+name: Validate Databricks Bundle (PR)
+
+on:
+  pull_request:
+    paths:
+      - "my_project/**"
+      - ".github/workflows/**"
 
 permissions:
   id-token: write
