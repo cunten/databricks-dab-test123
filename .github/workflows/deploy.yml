@@ -24,6 +24,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug env vars
+        run: |
+          echo "DATABRICKS_HOST=$DATABRICKS_HOST"
+          echo "DATABRICKS_CLIENT_ID=$DATABRICKS_CLIENT_ID"
+          echo "DATABRICKS_CLIENT_SECRET=$DATABRICKS_CLIENT_SECRET"
+
       - name: Set up uv
         uses: astral-sh/setup-uv@v7
 
@@ -43,6 +49,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug env vars
+        run: |
+          echo "DATABRICKS_HOST=$DATABRICKS_HOST"
+          echo "DATABRICKS_CLIENT_ID=$DATABRICKS_CLIENT_ID"
+          echo "DATABRICKS_CLIENT_SECRET=$DATABRICKS_CLIENT_SECRET"
+
       - name: Set up Databricks CLI
         uses: databricks/setup-cli@main
 
@@ -57,4 +69,3 @@ jobs:
         run: |
           databricks bundle deploy -t dev \
             --var="service_principal_id=${{ secrets.DATABRICKS_CLIENT_ID }}"
-            --var="service_principal_id=50e63598-ed43-4982-82f6-00565cbda8af"
