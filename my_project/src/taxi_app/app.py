@@ -34,15 +34,21 @@ def load_data(limit: int = 50_000) -> pd.DataFrame:
         SELECT
             tpep_pickup_datetime,
             tpep_dropoff_datetime,
-            passenger_count,
             trip_distance,
             fare_amount,
-            tip_amount,
-            total_amount,
-            payment_type,
-            HOUR(tpep_pickup_datetime)  AS pickup_hour,
-            DATE(tpep_pickup_datetime)  AS pickup_date,
-            DAYOFWEEK(tpep_pickup_datetime) AS day_of_week
+            pickup_zip,
+            dropoff_zip,
+            HOUR(tpep_pickup_datetime)                        AS pickup_hour,
+            DATE(tpep_pickup_datetime)                        AS pickup_date,
+            DAYOFWEEK(tpep_pickup_datetime)                   AS day_of_week,
+            CAST(
+              (unix_timestamp(tpep_dropoff_datetime)
+               - unix_timestamp(tpep_pickup_datetime)) / 60.0
+            AS DOUBLE)                                        AS duration_min,
+            CASE
+              WHEN trip_distance > 0
+              THEN fare_amount / trip_distance
+            END                                               AS fare_per_mile
         FROM samples.nyctaxi.trips
         WHERE fare_amount  > 0
           AND trip_distance > 0
@@ -98,7 +104,7 @@ k1, k2, k3, k4 = st.columns(4)
 k1.metric("Total trips", f"{len(df_filtered):,}")
 k2.metric("Avg fare", f"${df_filtered['fare_amount'].mean():.2f}")
 k3.metric("Avg distance", f"{df_filtered['trip_distance'].mean():.2f} mi")
-k4.metric("Avg tip", f"${df_filtered['tip_amount'].mean():.2f}")
+k4.metric("Avg fare/mile", f"${df_filtered['fare_per_mile'].mean():.2f}")
 
 st.divider()
 
@@ -163,25 +169,36 @@ with col_right2:
     fig_hour.update_layout(showlegend=False, margin=dict(t=20))
     st.plotly_chart(fig_hour, use_container_width=True)
 
-# ── Payment type breakdown ───────────────────────────────────────────────────
-st.subheader("Payment type breakdown")
-payment_map = {1: "Credit card", 2: "Cash", 3: "No charge", 4: "Dispute", 5: "Unknown"}
-payment_counts = (
-    df_filtered["payment_type"]
-    .map(payment_map)
-    .fillna("Other")
-    .value_counts()
-    .reset_index()
-)
-payment_counts.columns = ["payment_type", "count"]
-fig_pie = px.pie(
-    payment_counts,
-    names="payment_type",
-    values="count",
-    hole=0.4,
-)
-fig_pie.update_layout(margin=dict(t=20))
-st.plotly_chart(fig_pie, use_container_width=True)
+# ── Top pickup & dropoff zip codes ──────────────────────────────────────────
+col_zip1, col_zip2 = st.columns(2)
+
+with col_zip1:
+    st.subheader("Top 10 pickup zip codes")
+    top_pickup = df_filtered["pickup_zip"].value_counts().head(10).reset_index()
+    top_pickup.columns = ["zip", "count"]
+    fig_pickup = px.bar(
+        top_pickup,
+        x="zip",
+        y="count",
+        labels={"zip": "ZIP code", "count": "Trips"},
+        color_discrete_sequence=["#FF4B4B"],
+    )
+    fig_pickup.update_layout(showlegend=False, margin=dict(t=20))
+    st.plotly_chart(fig_pickup, use_container_width=True)
+
+with col_zip2:
+    st.subheader("Top 10 dropoff zip codes")
+    top_dropoff = df_filtered["dropoff_zip"].value_counts().head(10).reset_index()
+    top_dropoff.columns = ["zip", "count"]
+    fig_dropoff = px.bar(
+        top_dropoff,
+        x="zip",
+        y="count",
+        labels={"zip": "ZIP code", "count": "Trips"},
+        color_discrete_sequence=["#1C83E1"],
+    )
+    fig_dropoff.update_layout(showlegend=False, margin=dict(t=20))
+    st.plotly_chart(fig_dropoff, use_container_width=True)
 
 # ── Raw data preview ─────────────────────────────────────────────────────────
 with st.expander("Raw data preview (first 500 rows)"):
@@ -190,10 +207,14 @@ with st.expander("Raw data preview (first 500 rows)"):
         use_container_width=True,
         column_config={
             "fare_amount": st.column_config.NumberColumn("Fare ($)", format="$%.2f"),
-            "tip_amount": st.column_config.NumberColumn("Tip ($)", format="$%.2f"),
-            "total_amount": st.column_config.NumberColumn("Total ($)", format="$%.2f"),
+            "fare_per_mile": st.column_config.NumberColumn(
+                "Fare/mile ($)", format="$%.2f"
+            ),
             "trip_distance": st.column_config.NumberColumn(
                 "Distance (mi)", format="%.2f"
+            ),
+            "duration_min": st.column_config.NumberColumn(
+                "Duration (min)", format="%.1f"
             ),
         },
     )
